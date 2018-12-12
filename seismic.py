@@ -1,5 +1,6 @@
 import numpy as np
-from seismic_utils import integral_memory_kernel, linear_kernel, memory_pdf, memory_ccdf
+from scipy.special import chdtri
+from seismic_utils import integral_memory_kernel, linear_kernel, memory_ccdf, memory_pdf
 
 #' Estimate the infectiousness of an information cascade
 #'
@@ -37,7 +38,7 @@ def get_infectiousness(
     share_time = np.sort(share_time)
 
 #   slopes <- 1/(p_time/2)
-    slopes = 1/(p_time/2) # = 2/p_time?
+    slopes = 1/(p_time/2) # = 2/p_time?  TODO above says p_time[1]=0, but if so then we divide by 0 here
 #   slopes[slopes < 1/max_window] <- 1/max_window
     slopes[slopes < 1/max_window] = 1/max_window
 #   slopes[slopes > 1/min_window] <- 1/min_window
@@ -102,10 +103,11 @@ def get_infectiousness(
 #           infectiousness_seq[j] <- (rt_count_weighted)/I
             infectiousness_seq[j] = rt_count_weighted/I
 #           p_low_seq[j] <- infectiousness_seq[j] * qchisq(0.05, 2*rt_num) / (2*rt_num)
-            quant_low = np.quantile(2*rt_num, 0.05)  # XXX quantile equivalent?
+            quant_low = chdtri(2*rt_num, 1-0.05) # XXX quantile equivalent?
             p_low_seq[j] = infectiousness_seq[j] * quant_low / (2*rt_num)
+
 #           p_up_seq[j] <- infectiousness_seq[j] * qchisq(0.95, 2*rt_num) / (2*rt_num)
-            quant_up = np.quantile(2*rt_num, 0.95)  # XXX quantile equivalent?
+            quant_up = chdtri(2*rt_num, 1-0.95) # XXX quantile equivalent?
             p_up_seq[j] = infectiousness_seq[j] * quant_up / (2*rt_num)
 
 #   ## p_low_seq[is.nan(p_low_seq)] <- 0
@@ -175,12 +177,12 @@ def pred_cascade(p_time, infectiousness, share_time, degree, n_star=100, feature
 #       list(prediction = prediction, features = features)
         return prediction, features
 
-if __name__ == '__main__':
+def test_functions():
     share_time = np.linspace(0, 10000, num=1000)
     degree = np.random.randint(1, 1000, size=1000)
     p_time = np.linspace(0, 10000, num=1000)
     infectiousness, p_up, p_low = get_infectiousness(share_time, degree, p_time)
-
     prediction = pred_cascade(p_time, infectiousness, share_time, degree)
 
-    print('cascade prediction:', prediction)
+if __name__ == '__main__':
+    test_functions()
