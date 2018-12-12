@@ -140,7 +140,7 @@ def pred_cascade(p_time, infectiousness, share_time, degree, n_star=100, feature
 
 #   # to train for best n_star, we get feature matrices
 #   features <- matrix(0, length(p_time), 3)
-    features = np.zeros(len(p_time), 3)
+    features = np.zeros((len(p_time), 3))
 
 #   prediction <- matrix(0, length(p_time), 1)
     prediction = np.zeros(len(p_time))
@@ -179,5 +179,8 @@ if __name__ == '__main__':
     share_time = np.linspace(0, 10000, num=1000)
     degree = np.random.randint(1, 1000, size=1000)
     p_time = np.linspace(0, 10000, num=1000)
-    res = get_infectiousness(share_time, degree, p_time)
-    print('infectiousness result:', res)
+    infectiousness, p_up, p_low = get_infectiousness(share_time, degree, p_time)
+
+    prediction = pred_cascade(p_time, infectiousness, share_time, degree)
+
+    print('cascade prediction:', prediction)
