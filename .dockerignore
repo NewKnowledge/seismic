@@ -1,0 +1,15 @@
+__pycache__/*
+
+_*
+.vscode
+.keras
+lib
+venv
+
+.gitignore
+Dockerfile
+*.dockerfile
+Jenkinsfile
+*.env
+.git
+miniconda*

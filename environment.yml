@@ -1,0 +1,12 @@
+name: base
+channels:
+- defaults
+dependencies:
+- pandas
+- retrying
+- pytest
+- dill
+- pip:
+  - ddtrace>=0.16.0
+  - git+https://github.com/NewKnowledge/nk-logger.git@master#egg=nk_logger
+  - git+https://github.com/NewKnowledge/nk-postgres.git@master#egg=nk_postgres
