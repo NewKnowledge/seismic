@@ -179,7 +179,8 @@ def pred_cascade(p_time, infectiousness, share_time, degree, n_star=100, feature
 
 def test_functions():
     share_time = np.linspace(0, 10000, num=1000)
-    degree = np.random.randint(1, 1000, size=1000)
+    degree = np.ones(1000) * 100
+    # degree = np.random.randint(1, 1000, size=1000)
     p_time = np.linspace(0, 10000, num=1000)
     infectiousness, p_up, p_low = get_infectiousness(share_time, degree, p_time)
     prediction = pred_cascade(p_time, infectiousness, share_time, degree)
