@@ -22,6 +22,7 @@ from seismic_utils import integral_memory_kernel, linear_kernel, memory_pdf, mem
 #' infectiousness <- get.infectiousness(tweet[, 1], tweet[, 2], pred.time)
 #' plot(pred.time, infectiousness$infectiousness)
 
+
 def get_infectiousness(
     share_time,
     degree,
@@ -50,7 +51,7 @@ def get_infectiousness(
     windows[windows < min_window] = min_window
 
 #   for(j in c(1:length(p_time))) {
-    for j in range(p_time):  # XXX range ok here?
+    for j in range(len(p_time)):  # XXX range ok here?
 #       ind <- which(share_time >= p_time[j] - windows[j] & share_time < p_time[j])
         ind = (share_time >= p_time[j] - windows[j]) & (share_time < p_time[j])
 
@@ -69,9 +70,9 @@ def get_infectiousness(
             windows[j] = p_time[j] - share_time[ind[1]]
 
 #   M_I <- matrix(0,nrow=length(share_time),ncol=length(p_time))
-    M_I = np.zeros(len(share_time), len(p_time))
+    M_I = np.zeros((len(share_time), len(p_time)))
 #   for(j in 1:length(p_time)){
-    for j in range(p_time):  # XXX range ok?
+    for j in range(len(p_time)):  # XXX range ok?
 #       M_I[,j] <- degree*integral_memory_kernel(p_time[j], share_time, slopes[j], windows[j])
         M_I[:,j] = degree*integral_memory_kernel(p_time[j], share_time, slopes[j], windows[j])
 #   infectiousness_seq <- rep(0, length(p_time))
@@ -173,3 +174,10 @@ def pred_cascade(p_time, infectiousness, share_time, degree, n_star=100, feature
     else:
 #       list(prediction = prediction, features = features)
         return prediction, features
+
+if __name__ == '__main__':
+    share_time = np.linspace(0, 10000, num=1000)
+    degree = np.random.randint(1, 1000, size=1000)
+    p_time = np.linspace(0, 10000, num=1000)
+    res = get_infectiousness(share_time, degree, p_time)
+    print('infectiousness result:', res)
